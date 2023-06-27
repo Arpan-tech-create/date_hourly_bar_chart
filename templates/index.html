@@ -50,6 +50,16 @@
             plotOptions: {
               series: {
                 cursor: 'pointer',
+                dataLabels: {
+        enabled: true,
+        format: '{y}', // Display the value of each bar
+        inside: true, // Position the labels inside the bars
+        verticalAlign: 'top', // Align the labels vertically centered
+        style: {
+          fontWeight: 'bold',
+          fontSize:'20px',
+        }
+      },
                 colorByPoint: true,
                 point: {
                   events: {
@@ -104,16 +114,28 @@
                   text: 'Message_Counts'
                 }
               },
+              
 
               series: [{
                 name: 'Occurrences',
                 data: counts,
+                dataLabels: {
+      enabled: true,
+      format: '{y}', // Display the value of each bar
+      inside: false, // Position the labels outside the bars
+      align: 'center', // Align the labels at the center of each bar
+      style: {
+        fontSize: '12px', // Adjust the font size as needed
+        fontWeight: 'bold'
+      }
+    }
                 
               }],
               plotOptions: {
     column: {
       colorByPoint: true // Enable color by point
-    }
+    },
+    
   }
            
             });

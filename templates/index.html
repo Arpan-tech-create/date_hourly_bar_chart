@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hourly Occurrences</title>
+  <script src="{{url_for('static',filename='highchart.js')}}"></script>
+</head>
+<body>
+  <div id="date-chart"></div>
+  <div id="hourly-chart"></div>
+
+  <script src="{{url_for('static',filename='jquery.js')}}"></script>
+  <script>
+    $(document).ready(function() {
+      $.ajax({
+        url: '/data',
+        method: 'GET',
+        success: function(response) {
+          const data = response.data;
+          const dates = [];
+          const counts = [];
+
+          for (let i = 0; i < data.length; i++) {
+            dates.push(data[i][0]);
+            counts.push(data[i][1]);
+          }
+
+          Highcharts.chart('date-chart', {
+            chart: {
+              type: 'column'
+            },
+            title: {
+              text: 'Daily Occurrences'
+            },
+            xAxis: {
+              categories: dates,
+              title: {
+                text: 'Date'
+              }
+            },
+            yAxis: {
+              min: 0,
+              title: {
+                text: 'Count'
+              }
+            },
+            series: [{
+              name: 'Occurrences',
+              data: counts
+            }],
+            plotOptions: {
+              series: {
+                cursor: 'pointer',
+                point: {
+                  events: {
+                    click: function() {
+                      const date = this.category;
+                      generateHourlyChart(date);
+                    }
+                  }
+                }
+              }
+            }
+          });
+        },
+        error: function() {
+          console.log('Error occurred while fetching data.');
+        }
+      });
+
+      function generateHourlyChart(date) {
+        $.ajax({
+          url: '/hourly_data',
+          method: 'GET',
+          data: { date: date },
+          success: function(response) {
+            const data = response.data;
+            const counts = Array.from({ length: 24 }, () => 0);
+
+            // Extract counts for each hour from the data
+            for (let i = 0; i < data.length; i++) {
+              const hour = parseInt(data[i][0]);
+              const count = data[i][1];
+              counts[hour] = count;
+            }
+            const chartTitle = 'Hourly Occurrences - ' + date;
+            Highcharts.chart('hourly-chart', {
+              chart: {
+                type: 'column'
+              },
+              title: {
+                text: chartTitle
+              },
+              xAxis: {
+                categories: Array.from({ length: 24 }, (_, i) => i),
+                title: {
+                  text: 'Hour'
+                }
+              },
+              yAxis: {
+                min: 0,
+                title: {
+                  text: 'Count'
+                }
+              },
+              series: [{
+                name: 'Occurrences',
+                data: counts
+              }]
+            });
+          },
+          error: function() {
+            console.log('Error occurred while fetching hourly data.');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

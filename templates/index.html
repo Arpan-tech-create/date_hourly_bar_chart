@@ -50,6 +50,7 @@
             plotOptions: {
               series: {
                 cursor: 'pointer',
+                colorByPoint: true,
                 point: {
                   events: {
                     click: function() {
@@ -90,6 +91,7 @@
               title: {
                 text: chartTitle
               },
+              
               xAxis: {
                 categories: Array.from({ length: 24 }, (_, i) => i),
                 title: {
@@ -102,10 +104,18 @@
                   text: 'Count'
                 }
               },
+
               series: [{
                 name: 'Occurrences',
-                data: counts
-              }]
+                data: counts,
+                
+              }],
+              plotOptions: {
+    column: {
+      colorByPoint: true // Enable color by point
+    }
+  }
+           
             });
           },
           error: function() {
